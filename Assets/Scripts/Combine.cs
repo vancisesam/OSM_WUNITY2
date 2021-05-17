@@ -11,7 +11,7 @@ public class Combine : MonoBehaviour
   
     
 
-    public static void CombineMeshes(GameObject obj)
+    public static void CombineMeshes(List<MeshFilter> objedtsToMerge)
     {
 
         obj.transform.position = Vector3.zero;

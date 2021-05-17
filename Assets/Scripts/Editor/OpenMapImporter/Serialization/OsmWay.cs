@@ -29,6 +29,18 @@ using UnityEngine;
 /// </summary>
 class OsmWay : BaseOsm
 {
+    public enum OSMType {
+        Way,
+        Boundary,
+        //...?
+    }
+    public enum OSMStructreType {
+        Grass,
+        Water,
+        Building,
+        
+    }
+
     /// <summary>
     /// Way ID.
     /// </summary>
@@ -44,21 +56,8 @@ class OsmWay : BaseOsm
     /// </summary>
     public List<ulong> NodeIDs { get; private set; }
 
-    /// <summary>
-    /// True if the way is a boundary.
-    /// </summary>
-    public bool IsBoundary { get; private set; }
-
-    /// <summary>
-    /// True if the way is a boundary.
-    /// </summary>
-    public bool IsWay { get; private set; }
-
-    /// <summary>
-    /// True if the way is a building.
-    /// </summary>
-    public bool IsBuilding { get; private set; }
-
+    public OSMType type;
+    public OSMStructreType structureType;
     /// <summary>
     /// Height of the structure.
     /// </summary>
@@ -70,7 +69,7 @@ class OsmWay : BaseOsm
     public string Name { get; private set; }
 
     /// <summary>
-    /// The name of the object.
+    /// The name of parent the object.
     /// </summary>
     public string Parent { get; private set; }
 
@@ -78,7 +77,7 @@ class OsmWay : BaseOsm
     /// The number of lanes on the road. Default is 1 for contra-flow
     /// </summary>
     public int Lanes { get; private set; }
-    public bool IsWalk { get; private set; }
+
     //public Material _material;
 
     public Material _material { get; private set; }

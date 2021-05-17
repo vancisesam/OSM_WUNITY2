@@ -31,20 +31,23 @@ internal abstract class BaseInfrastructureMaker
     /// </summary>
     protected MapReader map;
 
+    public MapReader Map {
+        get {
+            return map;
+        }
+    }
+
     /// <summary>
     /// The number of nodes present of this type in a file.
     /// </summary>
     public abstract int NodeCount { get; }
-
-    Transform walkable = ImportMapWrapper._walkable;
-    Transform obstacle = ImportMapWrapper._obstacles;
-
+    
 
 
     public static List<GameObject> roadgo = new List<GameObject>(); 
     public static List<CombineInstance> roadinstance = new List<CombineInstance>();
     public static List<MeshFilter> roadfilter = new List<MeshFilter>();
-
+    
     /// <summary>
     /// Awaken this instance!!!
     /// </summary>
@@ -52,6 +55,7 @@ internal abstract class BaseInfrastructureMaker
     {
         map = mapReader;
     }
+    
 
 
     /// <summary>
@@ -85,7 +89,7 @@ internal abstract class BaseInfrastructureMaker
     /// <param name="way">OsmWay instance</param>
     /// <param name="mat">Material to apply to the instance</param>
     /// <param name="objectName">The name of the object (building name, road etc.)</param>
-    protected void CreateObject(OsmWay way, Material mat, string objectName, bool IsWalk )
+    protected void CreateObject(OsmWay way, Material mat, string objectName, OsmWay.OSMType wayType, OsmWay.OSMStructreType structureType )
     {
         // Make sure we have some name to display
         objectName = string.IsNullOrEmpty(objectName) ? "OsmWay" : objectName;
@@ -118,21 +122,11 @@ internal abstract class BaseInfrastructureMaker
         mf.sharedMesh.triangles = indices.ToArray();
         mf.sharedMesh.uv = uvs.ToArray();
 
-
-
-        if (IsWalk == true)
-            {
-            go.transform.SetParent(walkable);
-                       
-        }
-        else
-        {
-            go.transform.SetParent(obstacle);
-             }
+        go.transform.SetParent(ImportMapWrapper.GetParentForOSMStructureType(structureType));
     }
 
 
-    
+
 
     protected abstract void OnObjectCreated(OsmWay way, Vector3 origin, List<Vector3> vectors, List<Vector3> normals, List<Vector2> uvs, List<int> indices);
 

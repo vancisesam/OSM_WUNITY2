@@ -16,7 +16,7 @@ internal sealed class WayMaker : BaseInfrastructureMaker
 
     public override int NodeCount
     {
-        get { return map.ways.FindAll((w) => { return w.IsWay; }).Count; }
+        get { return map.ways.FindAll((w) => { return w.type == OsmWay.OSMType.Way; }).Count; }
     }
 
     public WayMaker(MapReader mapReader)

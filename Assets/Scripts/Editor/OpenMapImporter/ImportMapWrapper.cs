@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 
 /*
@@ -29,11 +30,42 @@ internal sealed class ImportMapWrapper
     private ImportMapDataEditorWindow _window;
     private string _mapFile;
     public static Transform _obstacles;
-    public static Transform _walkable;
 
-    
-    public GameObject Walkable = CreateParent("Walkable");
-
+    private static Transform _walkable;
+    private static Transform Walkable {
+        get {
+            if(_walkable == null) {
+                _walkable = CreateParent("Walkable");
+            }
+            return _walkable;
+        }
+    }
+    private static Transform _notWalkable;
+    private static Transform NotWalkable {
+        get {
+            if (_notWalkable == null) {
+                _notWalkable = CreateParent("NotWalkable");
+            }
+            return _notWalkable;
+        }
+    }
+    public static Dictionary<OsmWay.OSMStructreType, Transform> structureParents;
+    public static Transform GetParentForOSMStructureType(OsmWay.OSMStructreType structureType) {
+        if (structureParents == null) structureParents = new Dictionary<OsmWay.OSMStructreType, Transform>();
+        if (!structureParents.ContainsKey(structureType) ) {
+            var parent = CreateParent(structureType.ToString());
+            switch (structureType) {
+                case OsmWay.OSMStructreType.Grass:
+                    parent.SetParent(Walkable);
+                    break;
+                case OsmWay.OSMStructreType.Water:
+                case OsmWay.OSMStructreType.Building:
+                    parent.SetParent(NotWalkable);
+                    break;
+            }
+        }
+        return structureParents[structureType];
+    }
 
     public ImportMapWrapper(ImportMapDataEditorWindow window, string mapFile)
                             
@@ -59,15 +91,20 @@ internal sealed class ImportMapWrapper
         var roadMaker = new WayMaker(mapReader);
         var FlatMaker = new FlatMaker(mapReader);
 
-
+        
 
         Process(buildingMaker, "Importing buildings");
         Process(roadMaker, "Importing roads");
         Process(FlatMaker, "Importing Flat things");
 
-   
+        var walkableMesh = new List<OsmWay>();
+        buildingMaker.Map.ways.FindAll((w) => { return "iswalkable" }));
+        walkableMesh.AddRange(buildingMaker.Map.ways.FindAll((w) => { return ?? })); //roads
+        walkableMesh.AddRange(buildingMaker.Map.ways.FindAll((w) => { return ?? })); //flats
+
         
-        Combine.CombineMeshes(Walkable);
+
+        Combine.CombineMeshes(walkableMesh);
 
     }
 
@@ -86,15 +123,12 @@ internal sealed class ImportMapWrapper
 
 
 
-    public static GameObject CreateParent(string name)
+    public static Transform CreateParent(string name)
     {
 
+        GameObject go = new GameObject(name);
 
-        GameObject go = new GameObject("name");
-        MeshFilter mf = go.AddComponent<MeshFilter>();
-        MeshRenderer mr = go.AddComponent<MeshRenderer>();
-
-        return go;
+        return go.transform;
     }
 
 
